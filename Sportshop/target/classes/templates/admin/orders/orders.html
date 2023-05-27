@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказы - Личный кабинет администратора</title>
+    <link th:href="@{/css/index.css}" type="text/css" rel="stylesheet">
+</head>
+<body>
+<h1>Личный кабинет администратора магазина "Sportshop"</h1>
+<form method="post" action="/logout">
+    <button type="submit">Выйти из личного кабинета</button>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+</form>
+<a th:href="@{/admin}">На главную</a>
+<hr>
+<h2>Заказы</h2>
+<form th:action="@{/admin/orders}">
+    <label>
+        Номер заказа (последние 4 символа):<br>
+        <input type="text" name="filter" maxlength="4" th:value="${filter}">
+    </label>
+    <button type="submit">Поиск</button>
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Товар</th>
+        <th>Пользователь</th>
+        <th>Количество</th>
+        <th>Цена</th>
+        <th>Дата/время</th>
+        <th>Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+      <td id="number" th:text="${order.number}"></td>
+      <td th:text="${order.product.title}"></td>
+      <td th:text="${order.person.login}"></td>
+      <td th:text="${order.count}"></td>
+      <td th:text="${order.price}"></td>
+      <td th:text="${order.dateTime}"></td>
+      <td>
+        <form method="post" th:action="@{/admin/orders/{orderId}/changeStatus(orderId=${order.id})}">
+          <select name="newStatus">
+            <option th:selected="${order.status.name() == 'Принят'}">Принят</option>
+            <option th:selected="${order.status.name() == 'Оформлен'}">Оформлен</option>
+            <option th:selected="${order.status.name() == 'Ожидает'}">Ожидает</option>
+            <option th:selected="${order.status.name() == 'Получен'}">Получен</option>
+          </select>
+          <button type="submit" id="save">Сохранить</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
